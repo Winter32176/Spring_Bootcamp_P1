@@ -1,39 +1,65 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Items</title>
+
   <style>
-    body { font-family: Arial, sans-serif; margin: 24px; }
-    .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    a.btn { padding: 8px 12px; border: 1px solid #333; text-decoration: none; }
-    table { border-collapse: collapse; width: 520px; max-width: 100%; }
-    th, td { border: 1px solid #ddd; padding: 8px; }
-    th { text-align: left; }
+    body {
+        font-family: Arial, sans-serif;
+        margin: 24px;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 400px;
+        margin-top: 16px;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    a {
+        display: inline-block;
+        margin-top: 12px;
+    }
   </style>
 </head>
-<body>
-  <div class="top">
-    <h1>Items</h1>
-    <a class="btn" th:href="@{/items/new}">Create new</a>
-  </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr th:if="${#lists.isEmpty(items)}">
-        <td colspan="2">No items yet.</td>
-      </tr>
-      <tr th:each="it : ${items}">
-        <td th:text="${it.id}"></td>
-        <td th:text="${it.name}"></td>
-      </tr>
-    </tbody>
-  </table>
+<body>
+
+<h1>Items</h1>
+
+<!-- ONLY ADMIN can see this link -->
+<a sec:authorize="hasRole('ADMIN')" th:href="@{/items/new}">
+  Create new item
+</a>
+
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <tr th:if="${#lists.isEmpty(items)}">
+    <td colspan="2">No items yet</td>
+  </tr>
+
+  <tr th:each="item : ${items}">
+    <td th:text="${item.id}"></td>
+    <td th:text="${item.name}"></td>
+  </tr>
+  </tbody>
+</table>
+
 </body>
 </html>
