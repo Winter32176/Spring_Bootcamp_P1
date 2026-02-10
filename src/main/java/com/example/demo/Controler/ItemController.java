@@ -1,7 +1,8 @@
 package com.example.demo.Controler;
 
 import com.example.demo.Model.CreateItemForm;
-import com.example.demo.Service.InMemoryItemStore;
+import com.example.demo.Repository.InMemoryItemRepository;
+import com.example.demo.Service.ItemService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,13 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/items")
 public class ItemController {
 
-    private final InMemoryItemStore store;
+    private final ItemService store;
 
-    public ItemController(InMemoryItemStore store) {
+    public ItemController(ItemService store) {
         this.store = store;
     }
 
-    @GetMapping
+    @GetMapping()
     public String list(Model model) {
         model.addAttribute("items", store.findAll());
         return "items/list";

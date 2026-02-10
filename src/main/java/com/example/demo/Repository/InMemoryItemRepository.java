@@ -10,19 +10,21 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
-public class InMemoryItemRepository {
+public class InMemoryItemRepository implements IMemoryRepository {
 
     private final Map<Long, Item> storage = new LinkedHashMap<>();
     private final AtomicLong seq = new AtomicLong(1);
 
-    public List<Item> findAll() {
+    @Override
+    public List<Item> getStorageValues() {
         return new ArrayList<>(storage.values());
     }
 
-    public Item save(String name) {
-        long id = seq.getAndIncrement();
-        Item item = new Item(id, name);
+    @Override
+    public boolean setStorageValues(Item item) {
+        var id =seq.getAndIncrement();
+        item.setId(id);
         storage.put(id, item);
-        return item;
+        return true;
     }
 }

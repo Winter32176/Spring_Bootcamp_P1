@@ -1,8 +1,8 @@
 package com.example.demo.Model;
 
 public class Item {
-    private final long id;
-    private final String name;
+    private long id;
+    private String name;
 
     public Item(long id, String name) {
         this.id = id;
@@ -11,6 +11,10 @@ public class Item {
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {
