@@ -17,6 +17,7 @@ import java.util.List;
 @Controller
 public class WebPageController {
 
+
     @Autowired
     Server server;
 
@@ -44,7 +45,7 @@ public class WebPageController {
 
     @GetMapping("/items/new")
     public String showAddForm(Model model) {
-        model.addAttribute("item", new Item()); // если Item record
+        model.addAttribute("item", new Item());
         model.addAttribute("title", "Add item");
         return "addEditPage";
     }
