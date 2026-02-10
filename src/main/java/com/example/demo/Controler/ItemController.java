@@ -25,24 +25,21 @@ public class ItemController {
     @GetMapping()
     public String list(Model model) {
         model.addAttribute("items", store.findAll());
-        return "items/list";
+        return "list";
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("form", new CreateItemForm());
-        return "items/new";
+        return "new";
     }
 
     @PostMapping
     public String create(@Valid @ModelAttribute("form") CreateItemForm form,
                          BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "items/new";
-        }
+        if (bindingResult.hasErrors()) return "new";
         store.save(form.getName().trim());
         return "redirect:/items";
     }
-
-
 }
+

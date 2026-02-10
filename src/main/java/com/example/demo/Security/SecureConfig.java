@@ -4,11 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,21 +16,32 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecureConfig {
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**", "/favicon.ico").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/items").authenticated()
+        http
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login", "/error/**").permitAll()
-                        // .requestMatchers(HttpMethod.GET, "/items").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**", "/favicon.ico").permitAll()
                         .requestMatchers(HttpMethod.GET, "/items/new").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/items").hasRole("ADMIN")
-                        .anyRequest().authenticated())
-                .exceptionHandling(e -> e.accessDeniedPage("/error/403"))
+                        .anyRequest().authenticated()
+                )
                 .formLogin(login -> login
-                        .defaultSuccessUrl("/items", true))
-                .logout(logout -> logout.logoutSuccessUrl("/login"))
-                .exceptionHandling(e -> e.accessDeniedPage("/error/403"));
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/items", true)
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll()
+                )
+                .exceptionHandling(e -> e.accessDeniedPage("/403"))
+                .rememberMe(rm -> rm
+                        .key("myKey")
+                        .tokenValiditySeconds(3000)
+                );
+
         return http.build();
     }
 
@@ -58,5 +64,4 @@ public class SecureConfig {
 
         return new InMemoryUserDetailsManager(admin, user);
     }
-
 }
