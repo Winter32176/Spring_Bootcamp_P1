@@ -1,4 +1,4 @@
-package com.example.demo.items;
+package com.example.demo.Model;
 
 public class Item {
     private final long id;

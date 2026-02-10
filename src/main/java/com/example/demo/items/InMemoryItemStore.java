@@ -1,5 +1,6 @@
 package com.example.demo.items;
 
+import com.example.demo.Model.Item;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
