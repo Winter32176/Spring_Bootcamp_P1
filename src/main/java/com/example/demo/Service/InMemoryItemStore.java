@@ -1,4 +1,4 @@
-package com.example.demo.items;
+package com.example.demo.Service;
 
 import com.example.demo.Model.Item;
 import org.springframework.stereotype.Repository;

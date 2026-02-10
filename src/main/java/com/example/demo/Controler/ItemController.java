@@ -1,7 +1,7 @@
 package com.example.demo.Controler;
 
-import com.example.demo.items.CreateItemForm;
-import com.example.demo.items.InMemoryItemStore;
+import com.example.demo.Model.CreateItemForm;
+import com.example.demo.Service.InMemoryItemStore;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
