@@ -81,7 +81,7 @@ public class CarController {
     @GetMapping("/{id}")
     public String details(@PathVariable long id, Model model) {
         var item = store.getById(id);
-        model.addAttribute("item", item);   // FIX: DO NOT overwrite with null
+        model.addAttribute("item", item);
         return "details";
     }
 
