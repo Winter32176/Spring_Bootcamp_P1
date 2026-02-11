@@ -29,6 +29,7 @@ public class CarController {
         } else {
             model.addAttribute("items", store.getStorageValues());
         }
+
         model.addAttribute("search", search);
         model.addAttribute("isAdmin", authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")));
@@ -51,37 +52,36 @@ public class CarController {
                          RedirectAttributes redirectAttributes,
                          Model model,
                          Authentication authentication) {
+
         if (authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            redirectAttributes.addFlashAttribute("error", "Access denied");
             return "redirect:/403";
         }
 
         if (br.hasErrors()) {
             model.addAttribute("categories", CarCategory.values());
-            model.addAttribute("error", " Error!");
-
             return "new";
         }
 
+        // FIXED PARAM ORDER: name, color, details, model, category, add
         boolean ok = store.setStorageValues(
-                form.getName(), form.getModel(), form.getColor(),
-                form.getDetails(), form.getCategory(), form.getAdd()
+                form.getName(),
+                form.getColor(),
+                form.getDetails(),
+                form.getModel(),
+                form.getCategory(),
+                form.getAdd()
         );
 
-        if (ok) {
-            redirectAttributes.addFlashAttribute("message", "Car created successfully!");
-        } else {
-            redirectAttributes.addFlashAttribute("error", "Failed to create car!");
-        }
+        if (ok) redirectAttributes.addFlashAttribute("message", "Car created successfully!");
+        else redirectAttributes.addFlashAttribute("error", "Failed to create car!");
+
         return "redirect:/items";
     }
 
     @GetMapping("/{id}")
     public String details(@PathVariable long id, Model model) {
-       var item= store.getById(id);
-               model.addAttribute("item", item);
-             model.addAttribute("item", null);
-
+        var item = store.getById(id);
+        model.addAttribute("item", item);   // FIX: DO NOT overwrite with null
         return "details";
     }
 
@@ -90,6 +90,7 @@ public class CarController {
         if (authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return "redirect:/403";
         }
+
         var item = store.getById(id);
         if (item == null) return "redirect:/items";
 
@@ -99,6 +100,7 @@ public class CarController {
         form.setColor(item.getColor());
         form.setDetails(item.getDetails());
         form.setCategory(item.getCategory());
+        form.setAdd(item.getAdditionalInfo()); // FIX: keep existing add
 
         model.addAttribute("form", form);
         model.addAttribute("categories", CarCategory.values());
@@ -106,12 +108,16 @@ public class CarController {
         return "edit";
     }
 
-    @PutMapping("/{id}/edit")
-    public String update(@PathVariable long id, @Valid @ModelAttribute("form") CreateItemForm form,
-                         BindingResult br, RedirectAttributes redirectAttributes, Model model,
+    // FIX: match the HTML form (method="post")
+    @PostMapping("/{id}/edit")
+    public String update(@PathVariable long id,
+                         @Valid @ModelAttribute("form") CreateItemForm form,
+                         BindingResult br,
+                         RedirectAttributes redirectAttributes,
+                         Model model,
                          Authentication authentication) {
+
         if (authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            redirectAttributes.addFlashAttribute("error", "Access denied");
             return "redirect:/403";
         }
 
@@ -121,29 +127,20 @@ public class CarController {
             return "edit";
         }
 
-        boolean ok = store.editStorageValues(new Car(id, form.getName(), form.getModel(), form.getColor(),
-                form.getDetails(), form.getCategory(), form.getAdd()));
+        // FIXED CONSTRUCTOR ORDER: id, name, color, details, model, category, add
+        boolean ok = store.editStorageValues(new Car(
+                id,
+                form.getName(),
+                form.getColor(),
+                form.getDetails(),
+                form.getModel(),
+                form.getCategory(),
+                form.getAdd()
+        ));
 
-        if (ok) {
-            redirectAttributes.addFlashAttribute("message", "Car updated successfully!");
-        } else {
-            redirectAttributes.addFlashAttribute("error", "Failed to update car!");
-        }
-        return "redirect:/items";
-    }
+        if (ok) redirectAttributes.addFlashAttribute("message", "Car updated successfully!");
+        else redirectAttributes.addFlashAttribute("error", "Failed to update car!");
 
-    @PostMapping("/{id}/delete")
-    public String delete(@PathVariable long id, RedirectAttributes redirectAttributes, Authentication authentication) {
-        if (authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            redirectAttributes.addFlashAttribute("error", "Access denied");
-            return "redirect:/403";
-        }
-        boolean deleted = store.deleteById(id);
-        if (deleted) {
-            redirectAttributes.addFlashAttribute("message", "Car deleted successfully!");
-        } else {
-            redirectAttributes.addFlashAttribute("error", "Car not found!");
-        }
         return "redirect:/items";
     }
 }

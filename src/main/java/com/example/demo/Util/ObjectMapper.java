@@ -1,24 +1,53 @@
 package com.example.demo.Util;
 
-import com.example.demo.Model.*;
-
-import java.lang.reflect.Field;
-import java.util.Arrays;
+import com.example.demo.Model.Car;
+import com.example.demo.Model.CarDAO;
+import com.example.demo.Model.MotorDAO;
 
 public class ObjectMapper {
-    public static CarDAO getCarDao(Car c, String additional) {
-        var add = additional.split(",", 2);
-        return new CarDAO(c.getName(), c.getColor(), c.getDetails(), c.getModel(), c.getCategory(), add[0], new MotorDAO(add[1]));
+
+    // Car -> CarDAO (no crash if add has no comma)
+    public static CarDAO toEntity(Car c) {
+        CarDAO dao = new CarDAO();
+        dao.setName(c.getName());
+        dao.setColor(c.getColor());
+        dao.setDetails(c.getDetails());
+        dao.setModel(c.getModel());
+        dao.setCategory(c.getCategory());
+        applyAdditional(dao, c.getAdditionalInfo());
+        return dao;
     }
 
-    public static Car getCar(CarDAO carDAO) {
-        return new Car(carDAO.getId(), carDAO.getName(), carDAO.getColor(), carDAO.getDetails(), carDAO.getModel(), carDAO.getCategory(), carDAO.getEngine().toString());
+    // apply "additionalInfo,engineType" safely
+    public static void applyAdditional(CarDAO dao, String add) {
+        String additionalInfo = (add == null) ? "" : add.trim();
+        String engineType = "";
+
+        if (additionalInfo.contains(",")) {
+            String[] parts = additionalInfo.split(",", 2);
+            additionalInfo = parts[0].trim();
+            engineType = parts[1].trim();
+        }
+
+        dao.setAdditionalInfo(additionalInfo);
+
+        if (dao.getEngine() == null) dao.setEngine(new MotorDAO(engineType));
+        else dao.getEngine().setType(engineType);
     }
 
-    public static CarDAO getCarDao(Car c) {
-        var add = c.getAdditionalInfo().split(",", 2);
-        Field[] fields = Car.class.getDeclaredFields();
+    // CarDAO -> Car (use engine.getType())
+    public static Car toModel(CarDAO d) {
+        if (d == null) return null;
+        String engineType = (d.getEngine() == null) ? "" : d.getEngine().getType();
 
-        return new CarDAO(c.getName(), c.getColor(), c.getDetails(), c.getModel(), c.getCategory(), add[0], new MotorDAO(add[1]));
+        return new Car(
+                d.getId(),
+                d.getName(),
+                d.getColor(),
+                d.getDetails(),
+                d.getModel(),
+                d.getCategory(),
+                d.getAdditionalInfo() + (engineType.isBlank() ? "" : "," + engineType)
+        );
     }
 }
