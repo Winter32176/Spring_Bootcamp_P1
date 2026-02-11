@@ -21,11 +21,17 @@ public class ItemService {
         return memory.setStorageValues(new Car(name, color, details, model, category));
     }
 
+    public boolean updateObject(Car car) {
+        return true;
+    }
+
     public List<Car> findAll() {
         return memory.getStorageValues();
     }
 
-    public List<Car> getById(long id) {
-        return memory.getStorageValues().stream().filter(x -> x.getId() == id).findFirst().stream().toList();
+    public Car getById(long id) {
+        return memory.getStorageValues().stream().filter(x -> x.getId() == id).findFirst().orElse(null);
     }
+
+
 }

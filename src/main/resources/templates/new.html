@@ -13,11 +13,12 @@
   </style>
 </head>
 <body>
-<h1>Create car</h1>
+<h1 th:text="${title}">Title</h1>
 
-<form th:action="@{/items}" th:object="${form}" method="post">
+<form th:object="${form}"
+      th:action="${mode == 'edit'} ? @{/items/{id}/edit(id=${id})} : @{/items}"
+      method="post">
 
-  <!-- CSRF (если Spring Security включён) -->
   <input type="hidden" th:if="${_csrf != null}"
          th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
@@ -39,18 +40,12 @@
 
   <label for="category">Category</label>
   <select id="category" th:field="*{category}">
-    <option value="" disabled selected>Select category...</option>
-    <option th:each="c : ${categories}"
-            th:value="${c}"
-            th:text="${c}">
-    </option>
+    <option value="">Select category...</option>
+    <option th:each="c : ${categories}" th:value="${c}" th:text="${c}"></option>
   </select>
   <div class="error" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
 
-  <div class="row">
-    <button type="submit">Save</button>
-    <a class="btn" th:href="@{/items}">Back</a>
-  </div>
+  <button type="submit" th:text="${mode == 'edit'} ? 'Update' : 'Save'">Save</button>
 </form>
 </body>
 </html>
