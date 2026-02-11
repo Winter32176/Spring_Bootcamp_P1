@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Create car</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 24px; width: 520px; max-width: 100%; }
+        label { display: block; margin-top: 12px; }
+        input, select { width: 100%; padding: 8px; margin-top: 6px; }
+        .error { color: #b00020; margin-top: 6px; }
+        .row { margin-top: 16px; display: flex; gap: 12px; }
+        button, a.btn { padding: 8px 12px; border: 1px solid #333; background: white; cursor: pointer; text-decoration: none; }
+    </style>
+</head>
+<body>
+<h1>Car</h1>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${#lists.isEmpty(items)}">
+        <td colspan="3">No items yet.</td>
+    </tr>
+
+    <tr th:each="it : ${items}">
+        <td th:text="${it.id}"></td>
+        <td th:text="${it.name}"></td>
+        <td th:text="${it.details}"></td>
+        <td th:text="${it.color}"></td>
+        <td th:text="${it.model}"></td>
+        <td th:text="${it.category}"></td>
+
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

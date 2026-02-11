@@ -2,28 +2,55 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
-  <title>Create item</title>
+  <title>Create car</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 24px; width: 520px; max-width: 100%; }
     label { display: block; margin-top: 12px; }
-    input { width: 100%; padding: 8px; margin-top: 6px; }
+    input, select { width: 100%; padding: 8px; margin-top: 6px; }
     .error { color: #b00020; margin-top: 6px; }
     .row { margin-top: 16px; display: flex; gap: 12px; }
     button, a.btn { padding: 8px 12px; border: 1px solid #333; background: white; cursor: pointer; text-decoration: none; }
   </style>
 </head>
 <body>
-  <h1>Create item</h1>
+<h1>Create car</h1>
 
-  <form th:action="@{/items}" th:object="${form}" method="post">
-    <label for="name">Name</label>
-    <input id="name" type="text" th:field="*{name}" />
-    <div class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+<form th:action="@{/items}" th:object="${form}" method="post">
 
-    <div class="row">
-      <button type="submit">Save</button>
-      <a class="btn" th:href="@{/items}">Back</a>
-    </div>
-  </form>
+  <!-- CSRF (если Spring Security включён) -->
+  <input type="hidden" th:if="${_csrf != null}"
+         th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+  <label for="name">Name</label>
+  <input id="name" type="text" th:field="*{name}" />
+  <div class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+
+  <label for="color">Color</label>
+  <input id="color" type="text" th:field="*{color}" />
+  <div class="error" th:if="${#fields.hasErrors('color')}" th:errors="*{color}"></div>
+
+  <label for="details">Details</label>
+  <input id="details" type="text" th:field="*{details}" />
+  <div class="error" th:if="${#fields.hasErrors('details')}" th:errors="*{details}"></div>
+
+  <label for="model">Model</label>
+  <input id="model" type="text" th:field="*{model}" />
+  <div class="error" th:if="${#fields.hasErrors('model')}" th:errors="*{model}"></div>
+
+  <label for="category">Category</label>
+  <select id="category" th:field="*{category}">
+    <option value="" disabled selected>Select category...</option>
+    <option th:each="c : ${categories}"
+            th:value="${c}"
+            th:text="${c}">
+    </option>
+  </select>
+  <div class="error" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
+
+  <div class="row">
+    <button type="submit">Save</button>
+    <a class="btn" th:href="@{/items}">Back</a>
+  </div>
+</form>
 </body>
 </html>

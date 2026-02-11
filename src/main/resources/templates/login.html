@@ -11,9 +11,6 @@
     <div><input name="username" placeholder="Username"></div>
     <div><input type="password" name="password" placeholder="Password"></div>
 
-    <input type="hidden" th:if="${_csrf != null}"
-           th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-
     <button type="submit">Sign in</button>
     <label>
         <input type="checkbox" name="remember-me">

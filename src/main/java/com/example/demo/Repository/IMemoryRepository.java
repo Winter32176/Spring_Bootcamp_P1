@@ -1,11 +1,11 @@
 package com.example.demo.Repository;
 
-import com.example.demo.Model.Item;
+import com.example.demo.Model.Car;
 
 import java.util.List;
 
 public interface IMemoryRepository {
-    List<Item> getStorageValues();
+    List<Car> getStorageValues();
 
-    boolean setStorageValues(Item item);
+    boolean setStorageValues(Car car);
 }
