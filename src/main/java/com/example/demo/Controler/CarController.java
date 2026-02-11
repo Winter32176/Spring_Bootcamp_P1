@@ -25,7 +25,7 @@ public class CarController {
     // LIST
     @GetMapping
     public String list(Model model) {
-        model.addAttribute("items", store.findAll());
+        model.addAttribute("items", store.getStorageValues());
         return "list";
     }
 
@@ -42,7 +42,7 @@ public class CarController {
     // DETAILS PAGE
     @GetMapping("/{id}")
     public String details(Model model, @PathVariable long id) {
-        Car item = store.getById(id);
+        Car item = null;// = store.getStorageValues(id);
         if (item == null) return "redirect:/items";
 
         model.addAttribute("items", List.of(item));
@@ -61,15 +61,15 @@ public class CarController {
             model.addAttribute("categories", CarCategory.values());
             return "new";
         }
-
-        boolean ok = store.saveObject(
-                form.getName().trim(),
-                form.getColor().trim(),
-                form.getDetails().trim(),
-                form.getModel().trim(),
-                form.getCategory(),
-                form.getName() + ", asd"
-        );
+        boolean ok = true;
+//   boolean ok     = store.setStorageValues(
+//                form.getName().trim(),
+//                form.getColor().trim(),
+//                form.getDetails().trim(),
+//                form.getModel().trim(),
+//                form.getCategory(),
+//                form.getName() + ", asd"
+//        );
 
         return ok ? "redirect:/items" : "redirect:/403";
     }
@@ -77,7 +77,7 @@ public class CarController {
     // EDIT FORM
     @GetMapping("/{id}/edit")
     public String showEditForm(Model model, @PathVariable long id) {
-        Car item = store.getById(id);
+        Car item=null;// = store.getById(id);
         if (item == null) return "redirect:/items";
 
         CreateItemForm form = new CreateItemForm();
@@ -109,14 +109,14 @@ public class CarController {
             return "new";
         }
 
-        boolean ok = store.updateObject(
-                new Car(
-                        form.getName().trim(),
-                        form.getColor().trim(),
-                        form.getDetails().trim(),
-                        form.getModel().trim(),
-                        form.getCategory(),  form.getName() + ", asd")
-        );
+        boolean ok =true;//= store.updateObject(
+//                new Car(
+//                        form.getName().trim(),
+//                        form.getColor().trim(),
+//                        form.getDetails().trim(),
+//                        form.getModel().trim(),
+//                        form.getCategory(), form.getName() + ", asd")
+//        );
 
         return ok ? "redirect:/items" : "redirect:/403";
     }

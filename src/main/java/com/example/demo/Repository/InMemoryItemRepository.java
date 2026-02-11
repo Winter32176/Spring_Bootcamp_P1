@@ -11,10 +11,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
-public class InMemoryItemRepository implements IMemoryRepository {
-
-    private final Map<Long, Car> storage = new LinkedHashMap<>();
-    private final AtomicLong seq = new AtomicLong(1);
+public class InMemoryItemRepository {}/*implements IMemoryRepository {
 
     @Override
     public List<CarDAO> getStorageValues() {
@@ -32,3 +29,4 @@ public class InMemoryItemRepository implements IMemoryRepository {
         return false;
     }
 }
+*/
