@@ -19,7 +19,8 @@ public class ItemService {
         this.repo = repo;
     }
 
-    public boolean setStorageValues(String name, String color, String details, String model, CarCategory category, String add) {
+    public boolean setStorageValues(String name, String color, String details, String model,
+                                    CarCategory category, String add) {
         CarDAO saved = repo.save(ObjectMapper.toEntity(new Car(name, color, details, model, category, add)));
         return saved != null;
     }
@@ -41,7 +42,7 @@ public class ItemService {
 
     @Transactional
     public boolean editStorageValues(Car car) {
-        if (car.getId() <= 0) return false;
+        if (car == null || car.getId() <= 0) return false;
 
         CarDAO entity = repo.findById(car.getId()).orElse(null);
         if (entity == null) return false;
@@ -52,9 +53,11 @@ public class ItemService {
         entity.setModel(car.getModel());
         entity.setCategory(car.getCategory());
 
-        // update additional + engine safely
         ObjectMapper.applyAdditional(entity, car.getAdditionalInfo());
+        return true;
+    }
 
-        return true; // entity will be flushed by @Transactional
+    public void deleteById(long id) {
+        repo.deleteById(id);
     }
 }

@@ -16,6 +16,7 @@
     th { text-align: left; white-space: nowrap; }
     .muted { color: #666; font-size: 0.9rem; }
     .nowrap { white-space: nowrap; }
+    form.inline { display: inline; margin: 0; }
   </style>
 </head>
 
@@ -68,12 +69,16 @@
     <td th:text="${it.color}"></td>
     <td th:text="${it.details}"></td>
     <td th:text="${it.category}"></td>
-
-    <!-- If your Car model field is named additionalInfo, use it.additionalInfo instead -->
     <td th:text="${it.additionalInfo}"></td>
 
     <td sec:authorize="hasRole('ADMIN')" class="nowrap">
       <a th:href="@{/items/{id}/edit(id=${it.id})}">Edit</a>
+
+      <form class="inline"
+            th:action="@{/items/{id}/delete(id=${it.id})}"
+            method="post">
+        <button type="submit" onclick="return confirm('Delete this car?')">Delete</button>
+      </form>
     </td>
   </tr>
   </tbody>

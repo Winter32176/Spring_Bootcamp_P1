@@ -31,16 +31,13 @@ public class CarController {
         }
 
         model.addAttribute("search", search);
-        model.addAttribute("isAdmin", authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")));
         return "list";
     }
 
     @GetMapping("/new")
     public String newItemForm(Model model, Authentication authentication) {
-        if (authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            return "redirect:/403";
-        }
+        if (!isAdmin(authentication)) return "redirect:/403";
+
         model.addAttribute("form", new CreateItemForm());
         model.addAttribute("categories", CarCategory.values());
         return "new";
@@ -53,16 +50,13 @@ public class CarController {
                          Model model,
                          Authentication authentication) {
 
-        if (authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            return "redirect:/403";
-        }
+        if (!isAdmin(authentication)) return "redirect:/403";
 
         if (br.hasErrors()) {
             model.addAttribute("categories", CarCategory.values());
             return "new";
         }
 
-        // FIXED PARAM ORDER: name, color, details, model, category, add
         boolean ok = store.setStorageValues(
                 form.getName(),
                 form.getColor(),
@@ -81,30 +75,25 @@ public class CarController {
     @GetMapping("/{id}")
     public String details(@PathVariable long id, Model model) {
         Car item = store.getById(id);
-        if (item == null) {
-            return "redirect:/items";
-        }
+        if (item == null) return "redirect:/items";
         model.addAttribute("item", item);
         return "details";
     }
 
-
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable long id, Model model, Authentication authentication) {
-        if (authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            return "redirect:/403";
-        }
+        if (!isAdmin(authentication)) return "redirect:/403";
 
-        var item = store.getById(id);
+        Car item = store.getById(id);
         if (item == null) return "redirect:/items";
 
-        var form = new CreateItemForm();
+        CreateItemForm form = new CreateItemForm();
         form.setName(item.getName());
         form.setModel(item.getModel());
         form.setColor(item.getColor());
         form.setDetails(item.getDetails());
         form.setCategory(item.getCategory());
-        form.setAdd(item.getAdditionalInfo()); // FIX: keep existing add
+        form.setAdd(item.getAdditionalInfo());
 
         model.addAttribute("form", form);
         model.addAttribute("categories", CarCategory.values());
@@ -112,7 +101,6 @@ public class CarController {
         return "edit";
     }
 
-    // FIX: match the HTML form (method="post")
     @PostMapping("/{id}/edit")
     public String update(@PathVariable long id,
                          @Valid @ModelAttribute("form") CreateItemForm form,
@@ -121,9 +109,7 @@ public class CarController {
                          Model model,
                          Authentication authentication) {
 
-        if (authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            return "redirect:/403";
-        }
+        if (!isAdmin(authentication)) return "redirect:/403";
 
         if (br.hasErrors()) {
             model.addAttribute("categories", CarCategory.values());
@@ -131,7 +117,6 @@ public class CarController {
             return "edit";
         }
 
-        // FIXED CONSTRUCTOR ORDER: id, name, color, details, model, category, add
         boolean ok = store.editStorageValues(new Car(
                 id,
                 form.getName(),
@@ -146,5 +131,17 @@ public class CarController {
         else redirectAttributes.addFlashAttribute("error", "Failed to update car!");
 
         return "redirect:/items";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable long id, Authentication authentication) {
+        if (!isAdmin(authentication)) return "redirect:/403";
+        store.deleteById(id);
+        return "redirect:/items";
+    }
+
+    private boolean isAdmin(Authentication authentication) {
+        return authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
     }
 }
