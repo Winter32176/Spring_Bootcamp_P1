@@ -58,6 +58,8 @@ public class CarController {
 
         if (br.hasErrors()) {
             model.addAttribute("categories", CarCategory.values());
+            model.addAttribute("error", " Error!");
+
             return "new";
         }
 

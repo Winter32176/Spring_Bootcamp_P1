@@ -28,7 +28,7 @@ public class CreateItemForm {
     private CarCategory category;
 
     @NotNull(message = "add is required")
-    private String add;
+    private String add="TESTA ,ABC";
 
 
     public String getAdd() {
