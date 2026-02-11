@@ -1,4 +1,5 @@
 package com.example.demo.Model;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -10,9 +11,16 @@ public class MotorDAO {
 
     public String type;
 
-    public MotorDAO(Long id, String type) {
-        this.id = id;
+    public MotorDAO(String type) {
         this.type = type;
+    }
+
+    public MotorDAO(long id, String type) {
+        this.type = type;
+        this.id = id;
+    }
+
+    public MotorDAO() {
     }
 
     public Long getId() {

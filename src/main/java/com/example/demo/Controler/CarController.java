@@ -67,7 +67,8 @@ public class CarController {
                 form.getColor().trim(),
                 form.getDetails().trim(),
                 form.getModel().trim(),
-                form.getCategory()
+                form.getCategory(),
+                form.getName() + ", asd"
         );
 
         return ok ? "redirect:/items" : "redirect:/403";
@@ -109,12 +110,12 @@ public class CarController {
         }
 
         boolean ok = store.updateObject(
-                new Car(id,
+                new Car(
                         form.getName().trim(),
                         form.getColor().trim(),
                         form.getDetails().trim(),
                         form.getModel().trim(),
-                        form.getCategory())
+                        form.getCategory(),  form.getName() + ", asd")
         );
 
         return ok ? "redirect:/items" : "redirect:/403";

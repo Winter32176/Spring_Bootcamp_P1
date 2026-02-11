@@ -1,6 +1,7 @@
 package com.example.demo.Repository;
 
 import com.example.demo.Model.Car;
+import com.example.demo.Model.CarDAO;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -16,15 +17,18 @@ public class InMemoryItemRepository implements IMemoryRepository {
     private final AtomicLong seq = new AtomicLong(1);
 
     @Override
-    public List<Car> getStorageValues() {
-        return new ArrayList<>(storage.values());
+    public List<CarDAO> getStorageValues() {
+        return new ArrayList<>();
     }
 
     @Override
-    public boolean setStorageValues(Car car) {
-        var id =seq.getAndIncrement();
-        car.setId(id);
-        storage.put(id, car);
+    public boolean setStorageValues(CarDAO car) {
+
         return true;
+    }
+
+    @Override
+    public boolean editStorageValues(CarDAO car) {
+        return false;
     }
 }
