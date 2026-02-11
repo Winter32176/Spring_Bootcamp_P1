@@ -31,7 +31,10 @@
 	</properties>
 	<dependencies>
 		<!-- Practical 1: UI list + create flow, in-memory storage -->
-
+		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
