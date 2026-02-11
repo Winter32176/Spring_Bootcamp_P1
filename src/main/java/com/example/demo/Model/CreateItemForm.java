@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 
 public class CreateItemForm {
 
+    private long id;
+
     @NotBlank(message = "Name is required")
     @Size(max = 50, message = "Name must be 50 characters or less")
     private String name;
@@ -63,5 +65,13 @@ public class CreateItemForm {
 
     public CarCategory getCategory() {
         return category;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

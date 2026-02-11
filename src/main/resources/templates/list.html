@@ -21,7 +21,7 @@
 <body>
 <div class="top">
   <div>
-    <h1>Items</h1>
+    <h1>Cars</h1>
     <div class="muted">
       Signed in as: <span sec:authentication="name">user</span>
       |
@@ -53,7 +53,7 @@
 
   <tbody>
   <tr th:if="${#lists.isEmpty(items)}">
-    <td colspan="3">No items yet.</td>
+    <td colspan="3">No cars yet.</td>
   </tr>
 
   <tr th:each="it : ${items}">

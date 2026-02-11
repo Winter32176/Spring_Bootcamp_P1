@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-@Repository
-public class InMemoryItemRepository {}/*implements IMemoryRepository {
+public class InMemoryItemRepository implements IMemoryRepository {
 
     @Override
     public List<CarDAO> getStorageValues() {
@@ -29,4 +28,3 @@ public class InMemoryItemRepository {}/*implements IMemoryRepository {
         return false;
     }
 }
-*/
