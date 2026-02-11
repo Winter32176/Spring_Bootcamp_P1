@@ -9,6 +9,7 @@ public class Car {
     private String model;
     CarCategory category;
 
+
     public Car(long id, String name, String color, String details, String model, CarCategory c) {
         this.id = id;
         this.name = name;

@@ -8,4 +8,5 @@ public interface IMemoryRepository {
     List<Car> getStorageValues();
 
     boolean setStorageValues(Car car);
+
 }
