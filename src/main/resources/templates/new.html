@@ -17,7 +17,8 @@
 
 <form th:object="${form}"
       th:action="${mode == 'edit'} ? @{/items/{id}/edit(id=${id})} : @{/items}"
-      method="post">
+      th:method="${mode == 'edit'} ? 'put' : 'post'">
+
 
   <input type="hidden" th:if="${_csrf != null}"
          th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />

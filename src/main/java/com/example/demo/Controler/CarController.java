@@ -94,7 +94,7 @@ public class CarController {
         return "new";
     }
 
-    @PostMapping("/{id}/edit")
+    @PutMapping("/{id}/edit")
     public String update(@PathVariable long id,
                          @Valid @ModelAttribute("form") CreateItemForm form,
                          BindingResult br,

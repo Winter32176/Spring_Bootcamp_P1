@@ -61,5 +61,9 @@ public class ItemService {
 
     }
 
+    public boolean deleteById(long id) {
+        repo.deleteById(id);
+        return true;
+    }
 
 }
