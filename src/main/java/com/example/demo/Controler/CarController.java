@@ -1,16 +1,16 @@
-package com.example.demo.Controler;
+package com.example.demo.Controller;
 
 import com.example.demo.Model.Car;
 import com.example.demo.Model.CarCategory;
 import com.example.demo.Model.CreateItemForm;
 import com.example.demo.Service.ItemService;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/items")
@@ -22,102 +22,126 @@ public class CarController {
         this.store = store;
     }
 
-    // LIST
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("items", store.getStorageValues());
+    public String list(@RequestParam(required = false) String search, Model model, Authentication authentication) {
+        if (search != null && !search.trim().isEmpty()) {
+            model.addAttribute("items", store.findAllByName(search));
+        } else {
+            model.addAttribute("items", store.getStorageValues());
+        }
+        model.addAttribute("search", search);
+        model.addAttribute("isAdmin", authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")));
         return "list";
     }
 
-    // CREATE FORM
     @GetMapping("/new")
-    public String showCreateForm(Model model) {
-        model.addAttribute("title", "Add item");
-        model.addAttribute("mode", "add");
+    public String newItemForm(Model model, Authentication authentication) {
+        if (authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return "redirect:/403";
+        }
         model.addAttribute("form", new CreateItemForm());
         model.addAttribute("categories", CarCategory.values());
         return "new";
     }
 
-    // DETAILS PAGE
-    @GetMapping("/{id}")
-    public String details(Model model, @PathVariable long id) {
-        Car item = store.getById(id);
-        if (item == null) return "redirect:/items";
-
-        model.addAttribute("items", List.of(item));
-        return "car";
-    }
-
-    // CREATE POST
     @PostMapping
     public String create(@Valid @ModelAttribute("form") CreateItemForm form,
                          BindingResult br,
-                         Model model) {
+                         RedirectAttributes redirectAttributes,
+                         Model model,
+                         Authentication authentication) {
+        if (authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            redirectAttributes.addFlashAttribute("error", "Access denied");
+            return "redirect:/403";
+        }
 
         if (br.hasErrors()) {
-            model.addAttribute("title", "Add item");
-            model.addAttribute("mode", "add");
             model.addAttribute("categories", CarCategory.values());
             return "new";
         }
+
         boolean ok = store.setStorageValues(
-                form.getName().trim(),
-                form.getColor().trim(),
-                form.getDetails().trim(),
-                form.getModel().trim(),
-                form.getCategory(),
-                form.getName() + ", asd"
+                form.getName(), form.getModel(), form.getColor(),
+                form.getDetails(), form.getCategory(), form.getAdd()
         );
 
-        return ok ? "redirect:/items" : "redirect:/403";
+        if (ok) {
+            redirectAttributes.addFlashAttribute("message", "Car created successfully!");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Failed to create car!");
+        }
+        return "redirect:/items";
     }
 
-    // EDIT FORM
+    @GetMapping("/{id}")
+    public String details(@PathVariable long id, Model model) {
+       var item= store.getById(id);
+               model.addAttribute("item", item);
+             model.addAttribute("item", null);
+
+        return "details";
+    }
+
     @GetMapping("/{id}/edit")
-    public String showEditForm(Model model, @PathVariable long id) {
-        Car item = store.getById(id);
+    public String editForm(@PathVariable long id, Model model, Authentication authentication) {
+        if (authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return "redirect:/403";
+        }
+        var item = store.getById(id);
         if (item == null) return "redirect:/items";
 
-        CreateItemForm form = new CreateItemForm();
+        var form = new CreateItemForm();
         form.setName(item.getName());
+        form.setModel(item.getModel());
         form.setColor(item.getColor());
         form.setDetails(item.getDetails());
-        form.setModel(item.getModel());
         form.setCategory(item.getCategory());
 
-        model.addAttribute("title", "Edit item");
-        model.addAttribute("mode", "edit");
-        model.addAttribute("id", id);
         model.addAttribute("form", form);
         model.addAttribute("categories", CarCategory.values());
-        return "new";
+        model.addAttribute("editId", id);
+        return "edit";
     }
 
     @PutMapping("/{id}/edit")
-    public String update(@PathVariable long id,
-                         @Valid @ModelAttribute("form") CreateItemForm form,
-                         BindingResult br,
-                         Model model) {
-
-        if (br.hasErrors()) {
-            model.addAttribute("title", "Edit item");
-            model.addAttribute("mode", "edit");
-            model.addAttribute("id", id);
-            model.addAttribute("categories", CarCategory.values());
-            return "new";
+    public String update(@PathVariable long id, @Valid @ModelAttribute("form") CreateItemForm form,
+                         BindingResult br, RedirectAttributes redirectAttributes, Model model,
+                         Authentication authentication) {
+        if (authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            redirectAttributes.addFlashAttribute("error", "Access denied");
+            return "redirect:/403";
         }
 
-        boolean ok = store.editStorageValues(
-                new Car(
-                        form.getId(),
-                        form.getName().trim(),
-                        form.getColor().trim(),
-                        form.getDetails().trim(),
-                        form.getModel().trim(),
-                        form.getCategory(), form.getName() + ", asd")
-        );
+        if (br.hasErrors()) {
+            model.addAttribute("categories", CarCategory.values());
+            model.addAttribute("editId", id);
+            return "edit";
+        }
 
-        return ok ? "redirect:/items" : "redirect:/501";
+        boolean ok = store.editStorageValues(new Car(id, form.getName(), form.getModel(), form.getColor(),
+                form.getDetails(), form.getCategory(), form.getAdd()));
+
+        if (ok) {
+            redirectAttributes.addFlashAttribute("message", "Car updated successfully!");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Failed to update car!");
+        }
+        return "redirect:/items";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable long id, RedirectAttributes redirectAttributes, Authentication authentication) {
+        if (authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            redirectAttributes.addFlashAttribute("error", "Access denied");
+            return "redirect:/403";
+        }
+        boolean deleted = store.deleteById(id);
+        if (deleted) {
+            redirectAttributes.addFlashAttribute("message", "Car deleted successfully!");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Car not found!");
+        }
+        return "redirect:/items";
     }
 }

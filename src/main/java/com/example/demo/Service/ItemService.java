@@ -66,4 +66,8 @@ public class ItemService {
         return true;
     }
 
+    public Car findAllByName(String name) {
+        return null;
+    }
+
 }

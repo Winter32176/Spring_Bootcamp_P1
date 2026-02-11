@@ -1,41 +1,62 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Create car</title>
+    <meta charset="UTF-8" />
+    <title>Car details</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 24px; width: 520px; max-width: 100%; }
-        label { display: block; margin-top: 12px; }
-        input, select { width: 100%; padding: 8px; margin-top: 6px; }
-        .error { color: #b00020; margin-top: 6px; }
-        .row { margin-top: 16px; display: flex; gap: 12px; }
-        button, a.btn { padding: 8px 12px; border: 1px solid #333; background: white; cursor: pointer; text-decoration: none; }
+        .row { margin-bottom: 8px; }
+        .label { font-weight: bold; }
+        a.btn { padding: 6px 10px; border: 1px solid #333; text-decoration: none; background: white; }
     </style>
 </head>
+
 <body>
-<h1>Car</h1>
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:if="${#lists.isEmpty(items)}">
-        <td colspan="3">No items yet.</td>
-    </tr>
 
-    <tr th:each="it : ${items}">
-        <td th:text="${it.id}"></td>
-        <td th:text="${it.name}"></td>
-        <td th:text="${it.details}"></td>
-        <td th:text="${it.color}"></td>
-        <td th:text="${it.model}"></td>
-        <td th:text="${it.category}"></td>
+<h1>Car details</h1>
 
-    </tr>
-    </tbody>
-</table>
+<!-- If car not found -->
+<div th:if="${car == null}">
+    <p>Car not found.</p>
+    <a class="btn" th:href="@{/items}">Back to list</a>
+</div>
+
+<!-- If car exists -->
+<div th:if="${car != null}">
+    <div class="row">
+        <span class="label">ID:</span>
+        <span th:text="${car.id}"></span>
+    </div>
+
+    <div class="row">
+        <span class="label">Name:</span>
+        <span th:text="${car.name}"></span>
+    </div>
+
+    <div class="row">
+        <span class="label">Color:</span>
+        <span th:text="${car.color}"></span>
+    </div>
+
+    <div class="row">
+        <span class="label">Details:</span>
+        <span th:text="${car.details}"></span>
+    </div>
+
+    <div class="row">
+        <span class="label">Model:</span>
+        <span th:text="${car.model}"></span>
+    </div>
+
+    <div class="row">
+        <span class="label">Category:</span>
+        <span th:text="${car.category}"></span>
+    </div>
+
+    <div class="row" style="margin-top: 16px;">
+        <a class="btn" th:href="@{/items}">Back to list</a>
+    </div>
+</div>
+
 </body>
 </html>

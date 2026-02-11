@@ -27,6 +27,18 @@ public class CreateItemForm {
     @NotNull(message = "category is required")
     private CarCategory category;
 
+    @NotNull(message = "add is required")
+    private String add;
+
+
+    public String getAdd() {
+        return add;
+    }
+
+    public void setAdd(String add) {
+        this.add = add;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
