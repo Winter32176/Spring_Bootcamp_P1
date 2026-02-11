@@ -30,10 +30,7 @@
     </div>
 
     <div class="right">
-      <!-- Кнопка создания только для ADMIN -->
       <a class="btn" th:href="@{/items/new}" sec:authorize="hasRole('ADMIN')">Create new</a>
-
-      <!-- Logout (POST) -->
       <form th:action="@{/logout}" method="post" style="margin: 0;">
         <button class="btn" type="submit">Logout</button>
       </form>
@@ -48,7 +45,6 @@
       <th>details<</th>
       <th>color</th>
 
-      <!-- Колонка Actions только для ADMIN -->
       <th sec:authorize="hasRole('ADMIN')">Edit</th>
       <th sec:authorize="hasRole('ADMIN')">Delete</th>
     </tr>
@@ -68,7 +64,6 @@
       <td th:text="${it.color}"></td>
       <td th:text="${it.additionalInfo}"></td>
 
-      <!-- Edit только для ADMIN -->
       <td sec:authorize="hasRole('ADMIN')">
         <a th:href="@{/items/{id}/edit(id=${it.id})}">Edit</a>
       </td>
@@ -89,7 +84,6 @@
     </tbody>
   </table>
 
-  <!-- Сообщение для USER -->
   <p class="muted" sec:authorize="hasRole('USER')">
     You are logged in as USER. Creating/editing items is available for ADMIN only.
   </p>
