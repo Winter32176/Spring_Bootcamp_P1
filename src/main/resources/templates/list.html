@@ -1,27 +1,28 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 
 <head>
   <meta charset="UTF-8" />
-  <title>Items</title>
+  <title>Cars</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 24px; }
     .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 12px; }
     .right { display: flex; align-items: center; gap: 10px; }
     a.btn, button.btn { padding: 8px 12px; border: 1px solid #333; text-decoration: none; background: transparent; cursor: pointer; }
-    table { border-collapse: collapse; width: 520px; max-width: 100%; }
-    th, td { border: 1px solid #ddd; padding: 8px; }
-    th { text-align: left; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+    th { text-align: left; white-space: nowrap; }
     .muted { color: #666; font-size: 0.9rem; }
+    .nowrap { white-space: nowrap; }
   </style>
 </head>
 
 <body>
 <div class="top">
   <div>
-    <h1>Items</h1>
+    <h1>Cars</h1>
     <div class="muted">
       Signed in as: <span sec:authentication="name">user</span>
       |
@@ -30,10 +31,8 @@
   </div>
 
   <div class="right">
-    <!-- Кнопка создания только для ADMIN -->
     <a class="btn" th:href="@{/items/new}" sec:authorize="hasRole('ADMIN')">Create new</a>
 
-    <!-- Logout (POST) -->
     <form th:action="@{/logout}" method="post" style="margin: 0;">
       <button class="btn" type="submit">Logout</button>
     </form>
@@ -43,34 +42,43 @@
 <table>
   <thead>
   <tr>
-    <th>ID</th>
-    <th>Name</th>
-
-    <!-- Колонка Actions только для ADMIN -->
-    <th sec:authorize="hasRole('ADMIN')">Actions</th>
+    <th class="nowrap">ID</th>
+    <th class="nowrap">Car Name</th>
+    <th class="nowrap">Model</th>
+    <th class="nowrap">Color</th>
+    <th>Details</th>
+    <th class="nowrap">Category</th>
+    <th class="nowrap">Additional (additional,engine)</th>
+    <th sec:authorize="hasRole('ADMIN')" class="nowrap">Actions</th>
   </tr>
   </thead>
 
   <tbody>
   <tr th:if="${#lists.isEmpty(items)}">
-    <td colspan="3">No items yet.</td>
+    <td colspan="8">No cars yet.</td>
   </tr>
 
   <tr th:each="it : ${items}">
-    <td>
+    <td class="nowrap">
       <a th:href="@{/items/{id}(id=${it.id})}" th:text="${it.id}"></a>
     </td>
-    <td th:text="${it.name}"></td>
 
-    <!-- Edit только для ADMIN -->
-    <td sec:authorize="hasRole('ADMIN')">
+    <td th:text="${it.name}"></td>
+    <td th:text="${it.model}"></td>
+    <td th:text="${it.color}"></td>
+    <td th:text="${it.details}"></td>
+    <td th:text="${it.category}"></td>
+
+    <!-- If your Car model field is named additionalInfo, use it.additionalInfo instead -->
+    <td th:text="${it.additionalInfo}"></td>
+
+    <td sec:authorize="hasRole('ADMIN')" class="nowrap">
       <a th:href="@{/items/{id}/edit(id=${it.id})}">Edit</a>
     </td>
   </tr>
   </tbody>
 </table>
 
-<!-- Сообщение для USER -->
 <p class="muted" sec:authorize="hasRole('USER')">
   You are logged in as USER. Creating/editing items is available for ADMIN only.
 </p>
