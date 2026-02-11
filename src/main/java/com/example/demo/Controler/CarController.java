@@ -143,4 +143,10 @@ public class CarController {
 
         return "redirect:/items";
     }
+
+    @DeleteMapping("/{id}/delete")
+    public String delete(@PathVariable long id) {
+        store.deleteById(id);
+        return "redirect:/items";
+    }
 }

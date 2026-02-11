@@ -57,4 +57,9 @@ public class ItemService {
 
         return true; // entity will be flushed by @Transactional
     }
+
+
+    public void deleteById(long id) {
+        repo.deleteById(id);
+    }
 }
