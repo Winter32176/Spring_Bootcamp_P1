@@ -1,4 +1,4 @@
-package com.example.demo.Controller;
+package com.example.demo.Controler;
 
 import com.example.demo.Model.Car;
 import com.example.demo.Model.CarCategory;
